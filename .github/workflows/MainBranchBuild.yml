@@ -1,0 +1,112 @@
+name: Main Branch Build
+run-name: ${{ github.actor }} has merged into main
+
+on:
+  push:
+    branches: main
+  # workflow_dispach allows this workflow to be manually triggered from the Actions tab
+  workflow_dispatch:
+
+env:
+  FIREBASE_GROUP: notify-on-release
+  ANDROID_BUNDLE_ID: com.monkeybased.hearthtechnicalexercise
+  ANDROID_ARTIFACT_NAME: HearthstoneExercise-Android
+  APK_NAME: app-release.apk
+  GRADLE_BUILD_COMMAND: AssembleRelease
+
+jobs:
+  job_0:
+    name: Build Android Binary
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build Android Binary on MacOs
+        if: runner.os == 'MacOs'
+        env:
+          KEYSTORE_B64: ${{ secrets.PREPROD_KEYSTORE_64 }}
+          KEYSTORE_PASS: ${{ secrets.PREPROD_KEYSTORE_PASSWORD }}
+          KEYSTORE_ALIAS: ${{ secrets.PREPROD_KEYSTORE_ALIAS }}
+          KEYSTORE_ALIAS_PASS: ${{ secrets.PREPROD_KEYSTORE_ALIAS_PASSWORD }}
+          BUILD_NUMBER: ${{ github.run_number }}
+        run: |
+          # create variables
+          KEYSTORE_FILE=$RUNNER_TEMP/keystore.jks
+          # import data from secret(s)
+          echo -n "$KEYSTORE_B64" | base64 --decode > $KEYSTORE_FILE
+          # build and sign the app
+          ./gradlew $GRADLE_BUILD_COMMAND \
+            -Pandroid.injected.signing.store.file=$KEYSTORE_FILE \
+            -Pandroid.injected.signing.store.password=$KEYSTORE_PASS \
+            -Pandroid.injected.signing.key.alias=$KEYSTORE_ALIAS \
+            -Pandroid.injected.signing.key.password=$KEYSTORE_ALIAS_PASS
+
+      - name: Build Android Binary on Windows
+        if: runner.os == 'Windows'
+        env:
+          KEYSTORE_B64: ${{ secrets.PREPROD_KEYSTORE_64 }}
+          KEYSTORE_PASS: ${{ secrets.PREPROD_KEYSTORE_PASSWORD }}
+          KEYSTORE_ALIAS: ${{ secrets.PREPROD_KEYSTORE_ALIAS }}
+          KEYSTORE_ALIAS_PASS: ${{ secrets.PREPROD_KEYSTORE_ALIAS_PASSWORD }}
+          BUILD_NUMBER: ${{ github.run_number }}
+        run: |
+          # create variables
+          New-Item keystore-64.txt -ItemType File -Value "$env:KEYSTORE_B64"
+          # import data from secret(s)
+          certutil -decode keystore-64.txt temp-keystore.jks
+          $env:TEMP_KEYSTORE_PATH=Resolve-Path temp-keystore.jks
+          # build and sign the app
+          ./gradlew $env:GRADLE_BUILD_COMMAND `
+          -P android.injected.signing.store.file=$env:TEMP_KEYSTORE_PATH `
+          -P android.injected.signing.store.password=$env:KEYSTORE_PASS `
+          -P android.injected.signing.key.alias=$env:KEYSTORE_ALIAS `
+          -P android.injected.signing.key.password=$env:KEYSTORE_ALIAS_PASS
+
+      - name: Upload Android Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.ANDROID_ARTIFACT_NAME }}
+          path: ./app/build/outputs/apk/release/app-release.apk
+          retention-days: 1
+
+      - name: Cleanup Windows
+        if: runner.os == 'Windows' && ${{ always() }}
+        run: |
+          Remove-Item keystore-64.txt
+          Remove-Item temp-keystore.jks
+
+# Requires Firebase CLI installed on the runner machine
+  job_1:
+    needs: job_0
+    name: Deploy Android to Firebase
+    runs-on: self-hosted
+
+    steps:
+      - name: Download Android Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ env.ANDROID_ARTIFACT_NAME }}
+
+      - name: Upload Artifact to Firebase
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+          FIREBASE_APP_ID: ${{ secrets.FIREBASE_ANDROID_ID }}
+        run: |
+          firebase appdistribution:distribute $env:APK_NAME `
+            --app $env:FIREBASE_APP_ID `
+            --groups $env:FIREBASE_GROUP `
+            --token $env:FIREBASE_TOKEN
+
+  job_2:
+    name: kt-lint
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: kt-lint
+        run: |
+          ./gradlew ktlint

@@ -1,0 +1,11 @@
+<resources>
+  <string name="app_name">HearthStone Technical Exercise</string>
+  <string name="card_name">Card Name: %s</string>
+  <string name="card_type">Type: %s</string>
+  <string name="card_set">Set: %s</string>
+  <string name="card_artist">Artist: %s</string>
+  <string name="card_flavor">Flavor text: %s</string>
+  <string name="card_faction">Faction: %s</string>
+  <string name="card_rarity">Rarity: %s</string>
+  <string name="card_details">Card Details</string>
+</resources>
