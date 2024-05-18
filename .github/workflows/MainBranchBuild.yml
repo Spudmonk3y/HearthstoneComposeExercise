@@ -16,6 +16,19 @@ env:
 
 jobs:
   job_0:
+    name: kt-lint
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: kt-lint
+        run: |
+          ./gradlew ktlint
+
+  job_1:
+    needs: job_0
     name: Build Android Binary
     runs-on: self-hosted
 
@@ -78,8 +91,8 @@ jobs:
           Remove-Item temp-keystore.jks
 
 # Requires Firebase CLI installed on the runner machine
-  job_1:
-    needs: job_0
+  job_2:
+    needs: job_1
     name: Deploy Android to Firebase
     runs-on: self-hosted
 
@@ -98,15 +111,3 @@ jobs:
             --app $env:FIREBASE_APP_ID `
             --groups $env:FIREBASE_GROUP `
             --token $env:FIREBASE_TOKEN
-
-  job_2:
-    name: kt-lint
-    runs-on: self-hosted
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: kt-lint
-        run: |
-          ./gradlew ktlint

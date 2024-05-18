@@ -44,12 +44,15 @@ fun CardList(cards: AsyncResult<List<Card>>?, onCardSelected: (Card) -> Unit, on
         LazyColumn(
             Modifier
                 .background(Color.LightGray)
-                .fillMaxSize()) {
+                .fillMaxSize()
+        ) {
             itemsIndexed(cards.data) { index, it ->
-                Row(modifier = Modifier
-                    .fillMaxWidth()
-                    .height(IntrinsicSize.Min)
-                    .clickable(onClick = { onCardSelected(it) })) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(IntrinsicSize.Min)
+                        .clickable(onClick = { onCardSelected(it) })
+                ) {
                     Icon(
                         painter = painterResource(CardSet.getSetFromCard(it).iconResId),
                         contentDescription = it.cardSet,

@@ -1,6 +1,5 @@
 package com.monkeybased.hearthtechnicalexercise.data.model
 
-import androidx.compose.ui.res.stringResource
 import com.monkeybased.hearthtechnicalexercise.ui.screen.HearthstoneScreen
 import com.monkeybased.hearthtechnicalexercise.R
 
