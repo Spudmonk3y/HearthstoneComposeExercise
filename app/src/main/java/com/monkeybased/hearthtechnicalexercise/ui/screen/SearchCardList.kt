@@ -15,6 +15,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.monkeybased.hearthtechnicalexercise.R
 import com.monkeybased.hearthtechnicalexercise.data.AsyncResult
@@ -31,7 +32,7 @@ fun SearchCardList(
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(onClick = { showSearchDialog.value = true }) {
-                Icon(painter = painterResource(id = R.drawable.icon_search), contentDescription = "Search for Cards")
+                Icon(painter = painterResource(id = R.drawable.icon_search), contentDescription = stringResource(id = R.string.global_search))
             }
         },
         floatingActionButtonPosition = FabPosition.End
@@ -57,7 +58,7 @@ fun ShowSearchDialog(onDismissRequest: () -> Unit, onSearchRequest: (String) -> 
     AlertDialog(
         onDismissRequest = { onDismissRequest() },
         title = {
-            Text(text = "Please enter your search term.")
+            Text(text = stringResource(id = R.string.search_prompt))
         },
         text = {
             TextField(searchText.value, onValueChange = { searchText.value = it }, singleLine = true)
@@ -68,7 +69,7 @@ fun ShowSearchDialog(onDismissRequest: () -> Unit, onSearchRequest: (String) -> 
                     onSearchRequest(searchText.value)
                 }
             ) {
-                Text("Confirm")
+                Text(stringResource(id = R.string.global_confirm))
             }
         },
         dismissButton = {
@@ -77,7 +78,7 @@ fun ShowSearchDialog(onDismissRequest: () -> Unit, onSearchRequest: (String) -> 
                     onDismissRequest()
                 }
             ) {
-                Text("Cancel")
+                Text(stringResource(id = R.string.global_cancel))
             }
         }
     )

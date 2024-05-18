@@ -41,9 +41,15 @@ import com.monkeybased.hearthtechnicalexercise.ui.theme.HearthTechnicalExerciseT
 @Composable
 fun CardList(cards: AsyncResult<List<Card>>?, onCardSelected: (Card) -> Unit, onErrorLoadingCards: () -> Unit) {
     if (cards is AsyncResult.Success) {
-        LazyColumn(Modifier.background(Color.LightGray).fillMaxSize()) {
+        LazyColumn(
+            Modifier
+                .background(Color.LightGray)
+                .fillMaxSize()) {
             itemsIndexed(cards.data) { index, it ->
-                Row(modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min).clickable(onClick = { onCardSelected(it) })) {
+                Row(modifier = Modifier
+                    .fillMaxWidth()
+                    .height(IntrinsicSize.Min)
+                    .clickable(onClick = { onCardSelected(it) })) {
                     Icon(
                         painter = painterResource(CardSet.getSetFromCard(it).iconResId),
                         contentDescription = it.cardSet,
@@ -86,7 +92,9 @@ fun CardList(cards: AsyncResult<List<Card>>?, onCardSelected: (Card) -> Unit, on
                                 painterResource(id = R.drawable.icon_image),
                                 tint = DarkLava,
                                 contentDescription = "",
-                                modifier = Modifier.align(Alignment.CenterEnd).padding(start = 24.dp, end = 24.dp)
+                                modifier = Modifier
+                                    .align(Alignment.CenterEnd)
+                                    .padding(start = 24.dp, end = 24.dp)
                             )
                         }
                     }
@@ -101,7 +109,7 @@ fun CardList(cards: AsyncResult<List<Card>>?, onCardSelected: (Card) -> Unit, on
             CircularProgressIndicator()
         }
     } else {
-        Toast.makeText(LocalContext.current, "Error collecting data", Toast.LENGTH_SHORT).show()
+        Toast.makeText(LocalContext.current, stringResource(id = R.string.generic_error_fetch), Toast.LENGTH_SHORT).show()
         onErrorLoadingCards()
     }
 }

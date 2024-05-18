@@ -22,6 +22,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -31,18 +32,19 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.monkeybased.hearthtechnicalexercise.R
 import com.monkeybased.hearthtechnicalexercise.data.model.NavBarFeature
 import com.monkeybased.hearthtechnicalexercise.ui.theme.DarkLava
 import com.monkeybased.hearthtechnicalexercise.ui.theme.HearthstoneBlueButton
 import com.monkeybased.hearthtechnicalexercise.ui.theme.HearthstoneWhite
 import com.monkeybased.hearthtechnicalexercise.ui.viewmodel.CardViewModel
 
-enum class HearthstoneScreen(val label: String) {
-    CLASS_LIST("Browse by Player Class"),
-    SET_LIST("Browse by Set"),
-    SEARCH("Search for a card"),
-    CARD_LIST("Card list"),
-    CARD_DETAIL("Card Details")
+enum class HearthstoneScreen(val labelResId: Int) {
+    CLASS_LIST(R.string.browse_by_class),
+    SET_LIST(R.string.browse_by_set),
+    SEARCH(R.string.global_search),
+    CARD_LIST(R.string.global_cards),
+    CARD_DETAIL(R.string.card_details)
 }
 
 @Composable
@@ -132,14 +134,14 @@ fun AppBar(currentScreen: HearthstoneScreen, canNavigateBack: Boolean, navigateU
         colors = TopAppBarDefaults.mediumTopAppBarColors(
             containerColor = HearthstoneBlueButton
         ),
-        title = { Text(text = currentScreen.label, color = HearthstoneWhite) },
+        title = { Text(text = stringResource(id = currentScreen.labelResId), color = HearthstoneWhite) },
         modifier = modifier.background(DarkLava),
         navigationIcon = {
             if (canNavigateBack) {
                 IconButton(onClick = navigateUp) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "Back",
+                        contentDescription = stringResource(id = R.string.global_back),
                         tint = HearthstoneWhite
                     )
                 }
@@ -168,7 +170,7 @@ fun BottomNavBar(navController: NavHostController, items: List<NavBarFeature>) {
                         tint = HearthstoneWhite
                     )
                 },
-                label = { Text(navBarFeature.label, textAlign = TextAlign.Center, color = HearthstoneWhite) }
+                label = { Text(stringResource(id = navBarFeature.labelResId), textAlign = TextAlign.Center, color = HearthstoneWhite) }
             )
         }
     }
