@@ -104,7 +104,13 @@ private fun MainScreenNavigationConfig(viewModel: CardViewModel, navController: 
                     viewModel.setSelectedCard(it)
                     navController.navigate(HearthstoneScreen.CARD_DETAIL.name)
                 },
-                onErrorLoadingCards = {}
+                onErrorReset = {
+                    viewModel.resetSearch()
+                    navController.popBackStack(HearthstoneScreen.CLASS_LIST.name, false)
+                },
+                onErrorRetry = {
+                    viewModel.retryRequest()
+                }
             )
         }
         composable(HearthstoneScreen.CARD_LIST.name) {
@@ -114,8 +120,12 @@ private fun MainScreenNavigationConfig(viewModel: CardViewModel, navController: 
                     viewModel.setSelectedCard(it)
                     navController.navigate(HearthstoneScreen.CARD_DETAIL.name)
                 },
-                onErrorLoadingCards = {
-                    navController.popBackStack()
+                onResetAfterError = {
+                    viewModel.resetSearch()
+                    navController.popBackStack(HearthstoneScreen.CLASS_LIST.name, false)
+                },
+                onErrorRetry = {
+                    viewModel.retryRequest()
                 }
             )
         }
@@ -152,7 +162,7 @@ fun AppBar(currentScreen: HearthstoneScreen, canNavigateBack: Boolean, navigateU
 
 @Composable
 fun BottomNavBar(navController: NavHostController, items: List<NavBarFeature>) {
-    BottomNavigation(backgroundColor = HearthstoneBlueButton) {
+    BottomNavigation(backgroundColor = DarkLava) {
         val currentRoute = currentRoute(navController)
         items.forEach { navBarFeature ->
             BottomNavigationItem(

@@ -2,13 +2,7 @@ package com.monkeybased.hearthtechnicalexercise.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple80 = Color(0xFFD0BCFF)
-val PurpleGrey80 = Color(0xFFCCC2DC)
-val Pink80 = Color(0xFFEFB8C8)
-
-val Purple40 = Color(0xFF6650a4)
-val PurpleGrey40 = Color(0xFF625b71)
-val Pink40 = Color(0xFF7D5260)
+val SlightlyDarkerLightGray = Color(0xFFbdbdbd)
 
 val DarkLava = Color(0xFF463c2d)
 val HearthstoneBeer = Color(0xFFf78c15)
@@ -20,7 +14,7 @@ val HearthstoneBlueButton = Color(0xFF26aee7)
 val DeathKnightClassColor = Color(0xFFC41E3A)
 val DemonHunterClassColor = Color(0xFFA330C9)
 val DruidClassColor = Color(0xFFFF7C0A)
-val HunterClassColor = Color(0xFFAAD372)
+val HunterClassColor = Color(0xFF99bd66)
 val MageClassColor = Color(0xFF3FC7EB)
 val PaladinClassColor = Color(0xFFF48CBA)
 val PriestClassColor = Color(0xFFFFFFFF)

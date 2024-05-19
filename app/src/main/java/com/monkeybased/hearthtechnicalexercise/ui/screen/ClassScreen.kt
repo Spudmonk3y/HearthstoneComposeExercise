@@ -18,16 +18,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.StrokeJoin
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.monkeybased.hearthtechnicalexercise.data.model.CharacterClass
-import com.monkeybased.hearthtechnicalexercise.ui.theme.DarkLava
 import com.monkeybased.hearthtechnicalexercise.ui.theme.HearthTechnicalExerciseTheme
+import com.monkeybased.hearthtechnicalexercise.ui.theme.SlightlyDarkerLightGray
 
 @Composable
 fun ClassScreen(onClassSelected: (String) -> Unit) {
@@ -38,18 +35,17 @@ fun ClassScreen(onClassSelected: (String) -> Unit) {
                     painter = painterResource(id = it.iconResId),
                     tint = it.classColor,
                     contentDescription = it.label,
-                    modifier = Modifier.size(72.dp).weight(0.2f).padding(6.dp)
+                    modifier = Modifier.size(60.dp).weight(0.15f).padding(6.dp)
                 )
                 Text(
                     modifier = Modifier.align(Alignment.CenterVertically).weight(0.8f),
                     text = it.label,
                     fontSize = 24.sp,
-                    color = it.classColor,
-                    style = TextStyle.Default.copy(drawStyle = Stroke(miter = 10f, width = 5f, join = StrokeJoin.Round))
+                    color = it.classColor
                 )
             }
             if (index < CharacterClass.entries.toList().lastIndex) {
-                Divider(color = DarkLava, thickness = 1.dp)
+                Divider(color = SlightlyDarkerLightGray, thickness = 1.dp)
             }
         }
     }

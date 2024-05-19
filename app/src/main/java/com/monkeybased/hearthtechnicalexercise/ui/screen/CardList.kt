@@ -1,6 +1,5 @@
 package com.monkeybased.hearthtechnicalexercise.ui.screen
 
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -15,15 +14,18 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material.AlertDialog
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
+import androidx.compose.material.TextButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -38,9 +40,12 @@ import com.monkeybased.hearthtechnicalexercise.data.model.Card
 import com.monkeybased.hearthtechnicalexercise.data.model.CardSet
 import com.monkeybased.hearthtechnicalexercise.ui.theme.DarkLava
 import com.monkeybased.hearthtechnicalexercise.ui.theme.HearthTechnicalExerciseTheme
+import com.monkeybased.hearthtechnicalexercise.ui.theme.SlightlyDarkerLightGray
 
 @Composable
-fun CardList(cards: AsyncResult<List<Card>>?, onCardSelected: (Card) -> Unit, onErrorLoadingCards: () -> Unit) {
+fun CardList(cards: AsyncResult<List<Card>>?, onCardSelected: (Card) -> Unit, onResetAfterError: () -> Unit, onErrorRetry: () -> Unit) {
+    val showErrorDialog = remember { mutableStateOf(false) }
+
     when (cards) {
         is AsyncResult.Success -> {
             LazyColumn(
@@ -106,7 +111,7 @@ fun CardList(cards: AsyncResult<List<Card>>?, onCardSelected: (Card) -> Unit, on
                         }
                     }
                     if (index < cards.data.lastIndex) {
-                        Divider(color = DarkLava, thickness = 1.dp)
+                        Divider(color = SlightlyDarkerLightGray, thickness = 1.dp)
                     }
                 }
             }
@@ -115,11 +120,57 @@ fun CardList(cards: AsyncResult<List<Card>>?, onCardSelected: (Card) -> Unit, on
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator(modifier = Modifier.testTag("spinner"))
             }
-        } else -> {
-            Toast.makeText(LocalContext.current, stringResource(id = R.string.generic_error_fetch), Toast.LENGTH_SHORT).show()
-            onErrorLoadingCards()
+        } is AsyncResult.Error -> {
+            showErrorDialog.value = true
+            if (showErrorDialog.value) {
+                ErrorDialog(
+                    onDismissRequest = {
+                        showErrorDialog.value = false
+                        onResetAfterError()
+                    },
+                    onRetryRequest = {
+                        showErrorDialog.value = false
+                        onErrorRetry()
+                    },
+                    exception = cards.exception
+                )
+            }
+        }
+        null -> {
+            onResetAfterError()
         }
     }
+}
+
+@Composable
+fun ErrorDialog(onDismissRequest: () -> Unit, onRetryRequest: () -> Unit, exception: Throwable? = null) {
+    AlertDialog(
+        onDismissRequest = { onDismissRequest() },
+        title = {
+            Text(text = stringResource(id = R.string.global_error))
+        },
+        text = {
+            Text(text = exception?.localizedMessage ?: stringResource(id = R.string.generic_error_fetch))
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    onRetryRequest()
+                }
+            ) {
+                Text(stringResource(id = R.string.global_retry))
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = {
+                    onDismissRequest()
+                }
+            ) {
+                Text(stringResource(id = R.string.global_reset))
+            }
+        }
+    )
 }
 
 @Preview(showBackground = true)
@@ -195,6 +246,7 @@ fun CardListPreview() {
                     )
                 )
             ),
+            {},
             {},
             {}
         )

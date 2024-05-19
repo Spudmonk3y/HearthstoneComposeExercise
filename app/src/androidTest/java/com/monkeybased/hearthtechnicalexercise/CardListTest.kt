@@ -19,8 +19,12 @@ class CardListTest {
     @Test
     fun cardListLoadingTest() {
         composeTestRule.setContent {
-            CardList(cards = AsyncResult.Loading, onCardSelected = {}) {
-            }
+            CardList(
+                cards = AsyncResult.Loading,
+                onCardSelected = {},
+                onErrorRetry = {},
+                onResetAfterError = {}
+            )
         }
 
         composeTestRule.onNodeWithTag("spinner").assertIsDisplayed()
@@ -29,8 +33,12 @@ class CardListTest {
     @Test
     fun cardListSuccess() {
         composeTestRule.setContent {
-            CardList(cards = AsyncResult.Success(getCards()), onCardSelected = {}) {
-            }
+            CardList(
+                cards = AsyncResult.Success(getCards()),
+                onCardSelected = {},
+                onErrorRetry = {},
+                onResetAfterError = {}
+            )
         }
 
         composeTestRule.onNodeWithText("Relicologist").assertIsDisplayed()
@@ -41,8 +49,12 @@ class CardListTest {
     @Test
     fun cardListImageIcon() {
         composeTestRule.setContent {
-            CardList(cards = AsyncResult.Success(getCards()), onCardSelected = {}) {
-            }
+            CardList(
+                cards = AsyncResult.Success(getCards()),
+                onCardSelected = {},
+                onErrorRetry = {},
+                onResetAfterError = {}
+            )
         }
         composeTestRule.onNodeWithTag("image_indicator:ULDA_RENO_HP2", true).assertIsNotDisplayed()
         composeTestRule.onNodeWithTag("image_indicator:BOM_02_Octobot_007hb", true).assertIsNotDisplayed()

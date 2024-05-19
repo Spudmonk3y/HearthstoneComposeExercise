@@ -25,42 +25,61 @@ class CardViewModel : ViewModel() {
     private val _uiState = MutableStateFlow<UiState>(UiState(null))
     val uiState: StateFlow<UiState> = _uiState
 
+    private var currentRequest: (() -> Unit)? = null
+
     init {
         _cards.value = AsyncResult.Success(emptyList())
         _searchCards.value = AsyncResult.Success(emptyList())
     }
 
     fun fetchCardBySet(set: String) {
-        viewModelScope.launch {
-            try {
-                _cards.value = AsyncResult.Loading
-                _cards.value = AsyncResult.Success(cardService.getCardsBySet(set))
-            } catch (e: Exception) {
-                _cards.value = AsyncResult.Error(e)
+        currentRequest = {
+            viewModelScope.launch {
+                try {
+                    _cards.value = AsyncResult.Loading
+                    _cards.value = AsyncResult.Success(cardService.getCardsBySet(set))
+                } catch (e: Exception) {
+                    _cards.value = AsyncResult.Error(e)
+                }
             }
         }
+        currentRequest?.invoke()
     }
 
     fun fetchCardByClass(playerClass: String) {
-        viewModelScope.launch {
-            try {
-                _cards.value = AsyncResult.Loading
-                _cards.value = AsyncResult.Success(cardService.getCardsByClass(playerClass))
-            } catch (e: Exception) {
-                _cards.value = AsyncResult.Error(e)
+        currentRequest = {
+            viewModelScope.launch {
+                try {
+                    _cards.value = AsyncResult.Loading
+                    _cards.value = AsyncResult.Success(cardService.getCardsByClass(playerClass))
+                } catch (e: Exception) {
+                    _cards.value = AsyncResult.Error(e)
+                }
             }
         }
+        currentRequest?.invoke()
     }
 
     fun fetchCardBySearch(query: String) {
-        viewModelScope.launch {
-            try {
-                _searchCards.value = AsyncResult.Loading
-                _searchCards.value = AsyncResult.Success(cardService.getCardsBySearch(query))
-            } catch (e: Exception) {
-                _searchCards.value = AsyncResult.Error(e)
+        currentRequest = {
+            viewModelScope.launch {
+                try {
+                    _searchCards.value = AsyncResult.Loading
+                    _searchCards.value = AsyncResult.Success(cardService.getCardsBySearch(query))
+                } catch (e: Exception) {
+                    _searchCards.value = AsyncResult.Error(e)
+                }
             }
         }
+        currentRequest?.invoke()
+    }
+
+    fun resetSearch() {
+        _searchCards.value = AsyncResult.Success(emptyList())
+    }
+
+    fun retryRequest() {
+        currentRequest?.invoke()
     }
 
     fun setSelectedCard(card: Card) {

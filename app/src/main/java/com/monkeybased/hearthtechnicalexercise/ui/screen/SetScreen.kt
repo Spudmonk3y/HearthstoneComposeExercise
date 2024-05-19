@@ -25,6 +25,8 @@ import androidx.compose.ui.unit.sp
 import com.monkeybased.hearthtechnicalexercise.data.model.CardSet
 import com.monkeybased.hearthtechnicalexercise.ui.theme.DarkLava
 import com.monkeybased.hearthtechnicalexercise.ui.theme.HearthTechnicalExerciseTheme
+import com.monkeybased.hearthtechnicalexercise.ui.theme.HearthstoneWhite
+import com.monkeybased.hearthtechnicalexercise.ui.theme.SlightlyDarkerLightGray
 
 @Composable
 fun SetScreen(onSetSelected: (String) -> Unit) {
@@ -35,12 +37,12 @@ fun SetScreen(onSetSelected: (String) -> Unit) {
                     painter = painterResource(id = it.iconResId),
                     contentDescription = it.label,
                     modifier = Modifier.size(72.dp).weight(0.2f).padding(6.dp),
-                    tint = DarkLava
+                    tint = HearthstoneWhite
                 )
                 Text(modifier = Modifier.align(Alignment.CenterVertically).weight(0.8f), text = it.label, fontSize = 24.sp, color = DarkLava)
             }
             if (index < CardSet.entries.toList().lastIndex) {
-                Divider(color = DarkLava, thickness = 1.dp)
+                Divider(color = SlightlyDarkerLightGray, thickness = 1.dp)
             }
         }
     }

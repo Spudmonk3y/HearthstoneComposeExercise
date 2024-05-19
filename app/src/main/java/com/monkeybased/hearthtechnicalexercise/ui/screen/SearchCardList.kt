@@ -26,7 +26,8 @@ fun SearchCardList(
     searchCards: AsyncResult<List<Card>>?,
     onSearchAction: (String) -> Unit,
     onCardSelected: (Card) -> Unit,
-    onErrorLoadingCards: () -> Unit
+    onErrorReset: () -> Unit,
+    onErrorRetry: () -> Unit
 ) {
     val showSearchDialog = remember { mutableStateOf(false) }
     Scaffold(
@@ -39,7 +40,7 @@ fun SearchCardList(
 
     ) {
         Box(Modifier.padding(it)) {
-            CardList(searchCards, onCardSelected, onErrorLoadingCards)
+            CardList(searchCards, onCardSelected, onErrorReset, onErrorRetry)
         }
     }
 
@@ -87,5 +88,5 @@ fun ShowSearchDialog(onDismissRequest: () -> Unit, onSearchRequest: (String) -> 
 @Composable
 @Preview
 fun SearchCardListPreview() {
-    SearchCardList(searchCards = AsyncResult.Success(emptyList()), {}, {}, {})
+    SearchCardList(searchCards = AsyncResult.Success(emptyList()), {}, {}, {}, {})
 }

@@ -18,4 +18,7 @@
   <string name="global_confirm">Confirm</string>
   <string name="global_cancel">Cancel</string>
   <string name="generic_error_fetch">Error fetching data, please try again.</string>
+  <string name="global_error">Error</string>
+  <string name="global_retry">Retry</string>
+  <string name="global_reset">Reset</string>
 </resources>
