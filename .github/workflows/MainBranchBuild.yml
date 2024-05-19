@@ -40,7 +40,7 @@ jobs:
           ./gradlew test
 
   job_2:
-    name: Run Instrumented Test
+    name: Run Instrumented Tests
     runs-on: self-hosted
 
     steps:
