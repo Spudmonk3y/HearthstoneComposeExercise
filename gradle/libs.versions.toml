@@ -44,6 +44,8 @@ squareup-retrofit = { group = "com.squareup.retrofit2", name = "retrofit", versi
 squareup-retrofit-gsonconverter = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit"}
 androidx-compose-runtime = { group = "androidx.compose.runtime", name = "runtime-livedata", version.ref = "composeRuntime"}
 coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil"}
+androidx-compose-ui-test = { group = "androidx.compose.ui", name = "ui-test-junit4", version.ref = "composeRuntime"}
+androidx-compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest", version.ref = "composeRuntime"}
 
 # Services
 firebase-analytics = { module = "com.google.firebase:firebase-analytics", version.ref = "firebase-analytics" }

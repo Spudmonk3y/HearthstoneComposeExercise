@@ -24,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -40,80 +41,84 @@ import com.monkeybased.hearthtechnicalexercise.ui.theme.HearthTechnicalExerciseT
 
 @Composable
 fun CardList(cards: AsyncResult<List<Card>>?, onCardSelected: (Card) -> Unit, onErrorLoadingCards: () -> Unit) {
-    if (cards is AsyncResult.Success) {
-        LazyColumn(
-            Modifier
-                .background(Color.LightGray)
-                .fillMaxSize()
-        ) {
-            itemsIndexed(cards.data) { index, it ->
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(IntrinsicSize.Min)
-                        .clickable(onClick = { onCardSelected(it) })
-                ) {
-                    Icon(
-                        painter = painterResource(CardSet.getSetFromCard(it).iconResId),
-                        contentDescription = it.cardSet,
+    when (cards) {
+        is AsyncResult.Success -> {
+            LazyColumn(
+                Modifier
+                    .background(Color.LightGray)
+                    .fillMaxSize()
+            ) {
+                itemsIndexed(cards.data) { index, it ->
+                    Row(
                         modifier = Modifier
-                            .size(24.dp)
-                            .align(Alignment.CenterVertically)
-                            .padding(start = 12.dp, end = 12.dp)
-                            .weight(0.15f),
-                        tint = it.getRarityColor()
-                    )
-                    Box(modifier = Modifier.weight(0.85f)) {
-                        Column(Modifier.fillMaxWidth()) {
-                            Spacer(modifier = Modifier.size(4.dp))
-                            Text(
-                                modifier = Modifier.align(Alignment.Start),
-                                text = it.name,
-                                fontSize = 20.sp,
-                                style = TextStyle(lineHeight = 2.em),
-                                color = DarkLava
-                            )
-                            Text(
-                                modifier = Modifier.align(Alignment.Start),
-                                text = stringResource(id = R.string.card_type, it.type),
-                                fontSize = 14.sp,
-                                style = TextStyle(lineHeight = 2.em),
-                                color = DarkLava
-                            )
-                            Spacer(modifier = Modifier.size(6.dp))
-                            Text(
-                                modifier = Modifier.align(Alignment.Start),
-                                text = stringResource(id = R.string.card_set, it.cardSet),
-                                fontSize = 12.sp,
-                                style = TextStyle(lineHeight = 2.em),
-                                color = DarkLava
-                            )
-                            Spacer(modifier = Modifier.size(4.dp))
-                        }
-                        if (it.img != null) {
-                            Icon(
-                                painterResource(id = R.drawable.icon_image),
-                                tint = DarkLava,
-                                contentDescription = "",
-                                modifier = Modifier
-                                    .align(Alignment.CenterEnd)
-                                    .padding(start = 24.dp, end = 24.dp)
-                            )
+                            .fillMaxWidth()
+                            .height(IntrinsicSize.Min)
+                            .clickable(onClick = { onCardSelected(it) })
+                    ) {
+                        Icon(
+                            painter = painterResource(CardSet.getSetFromCard(it).iconResId),
+                            contentDescription = it.cardSet,
+                            modifier = Modifier
+                                .size(24.dp)
+                                .align(Alignment.CenterVertically)
+                                .padding(start = 12.dp, end = 12.dp)
+                                .weight(0.15f),
+                            tint = it.getRarityColor()
+                        )
+                        Box(modifier = Modifier.weight(0.85f)) {
+                            Column(Modifier.fillMaxWidth()) {
+                                Spacer(modifier = Modifier.size(4.dp))
+                                Text(
+                                    modifier = Modifier.align(Alignment.Start),
+                                    text = it.name,
+                                    fontSize = 20.sp,
+                                    style = TextStyle(lineHeight = 2.em),
+                                    color = DarkLava
+                                )
+                                Text(
+                                    modifier = Modifier.align(Alignment.Start),
+                                    text = stringResource(id = R.string.card_type, it.type),
+                                    fontSize = 14.sp,
+                                    style = TextStyle(lineHeight = 2.em),
+                                    color = DarkLava
+                                )
+                                Spacer(modifier = Modifier.size(6.dp))
+                                Text(
+                                    modifier = Modifier.align(Alignment.Start),
+                                    text = stringResource(id = R.string.card_set, it.cardSet),
+                                    fontSize = 12.sp,
+                                    style = TextStyle(lineHeight = 2.em),
+                                    color = DarkLava
+                                )
+                                Spacer(modifier = Modifier.size(4.dp))
+                            }
+                            if (it.img != null) {
+                                Icon(
+                                    painterResource(id = R.drawable.icon_image),
+                                    tint = DarkLava,
+                                    contentDescription = "",
+                                    modifier = Modifier
+                                        .align(Alignment.CenterEnd)
+                                        .padding(start = 24.dp, end = 24.dp)
+                                        .testTag("image_indicator:${it.cardId}")
+                                )
+                            }
                         }
                     }
-                }
-                if (index < cards.data.lastIndex) {
-                    Divider(color = DarkLava, thickness = 1.dp)
+                    if (index < cards.data.lastIndex) {
+                        Divider(color = DarkLava, thickness = 1.dp)
+                    }
                 }
             }
         }
-    } else if (cards is AsyncResult.Loading) {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            CircularProgressIndicator()
+        is AsyncResult.Loading -> {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator(modifier = Modifier.testTag("spinner"))
+            }
+        } else -> {
+            Toast.makeText(LocalContext.current, stringResource(id = R.string.generic_error_fetch), Toast.LENGTH_SHORT).show()
+            onErrorLoadingCards()
         }
-    } else {
-        Toast.makeText(LocalContext.current, stringResource(id = R.string.generic_error_fetch), Toast.LENGTH_SHORT).show()
-        onErrorLoadingCards()
     }
 }
 
